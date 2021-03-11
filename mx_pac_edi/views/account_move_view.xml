@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_mx_pac_edi_invoice_form_inherit" model="ir.ui.view">
+            <field name="name">mx_pac_edi.invoice.form.inherit</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet/group//group[last()]" position="inside">
+                    <!-- Invisible fields -->
+                    <field name="mx_pac_edi_cfdi_request" invisible="1"/>
+
+                    <!-- SAT -->
+                    <label for="mx_pac_edi_sat_status"
+                           attrs="{'invisible': ['|', ('state', 'not in', ('posted', 'cancel')), ('mx_pac_edi_cfdi_request', '=', False)]}"/>
+                    <div class="o_row"
+                         attrs="{'invisible': ['|', ('state', 'not in', ('posted', 'cancel')), ('mx_pac_edi_cfdi_request', '=', False)]}">
+                        <field name="mx_pac_edi_sat_status"/>
+                        <button name="mx_pac_edi_update_sat_status" type="object"
+                                string="Retry" class="oe_link"
+                                groups="account.group_account_invoice"
+                                attrs="{'invisible': ['|', ('state', 'not in', ('posted', 'cancel')), ('mx_pac_edi_cfdi_request', '=', False)]}"/>
+                    </div>
+
+                    <!-- CFDI -->
+                    <field name="mx_pac_edi_cfdi_uuid"
+                           attrs="{'invisible': ['|', ('state', 'not in', ('posted', 'cancel')), ('mx_pac_edi_cfdi_request', '=', False)]}"/>
+                    <field name="mx_pac_edi_origin"
+                           attrs="{'invisible': [('mx_pac_edi_cfdi_request', '=', False)]}"/>
+                </xpath>
+
+                <xpath expr="//field[@name='ref']" position="after">
+                    <field name="mx_pac_edi_payment_method_id"
+                           attrs="{'readonly': [('state', '!=', 'draft')], 'invisible': [('mx_pac_edi_cfdi_request', '=', False)]}"/>
+                    <field name="mx_pac_edi_payment_policy" 
+                        attrs="{'invisible': [('mx_pac_edi_cfdi_request', '=', False)]}"/>
+                    <field name="mx_pac_edi_usage"
+                           attrs="{'readonly':[('state', '!=', 'draft')], 'invisible': [('mx_pac_edi_cfdi_request', '=', False)]}"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
